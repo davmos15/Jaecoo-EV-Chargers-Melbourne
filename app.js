@@ -318,18 +318,35 @@
   }
 
   function wireAddress(which) {
-    var inputId = which + "Input", setId = which + "Set", clearId = which + "Clear", statusId = which + "Status";
-    var input = document.getElementById(inputId);
-    var status = document.getElementById(statusId);
+    var input  = document.getElementById(which + "Input");
+    var status = document.getElementById(which + "Status");
+    var acList = document.getElementById(which + "Ac");
+    var acTimer = null;
+    var acIndex = -1;
+    var acItems = [];
+
     if (state[which]) { input.value = state[which].label; setStatus(status, "Saved.", "ok"); }
 
-    document.getElementById(setId).addEventListener("click", function () {
-      var q = input.value.trim();
+    function closeAc() {
+      acList.hidden = true;
+      acItems = [];
+      acIndex = -1;
+    }
+
+    function highlightAc(idx) {
+      acIndex = idx;
+      Array.prototype.forEach.call(acList.children, function (li, i) {
+        li.classList.toggle("ac-active", i === idx);
+      });
+    }
+
+    function commit(q) {
       if (!q) { setStatus(status, "Type an address first.", "err"); return; }
       setStatus(status, "Locating…", "");
+      closeAc();
       geocode(q).then(function (loc) {
         state[which] = loc;
-        input.value = loc.label;
+        input.value = loc.display_name || q;
         save();
         placeAnchor(which);
         invalidateDriving();
@@ -340,21 +357,76 @@
       }).catch(function (err) {
         setStatus(status, err.message, "err");
       });
+    }
+
+    function showAc(q) {
+      if (q.length < 3) { closeAc(); return; }
+      var url = "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&countrycodes=au&q=" +
+                encodeURIComponent(q);
+      fetch(url, { headers: { Accept: "application/json" } })
+        .then(function (r) { return r.json(); })
+        .then(function (results) {
+          acList.innerHTML = "";
+          acItems = results;
+          acIndex = -1;
+          if (!results.length) { closeAc(); return; }
+          results.forEach(function (r) {
+            var li = document.createElement("li");
+            li.className = "ac-item";
+            li.textContent = r.display_name;
+            li.addEventListener("mousedown", function (e) {
+              e.preventDefault();
+              input.value = r.display_name;
+              closeAc();
+              commit(r.display_name);
+            });
+            acList.appendChild(li);
+          });
+          acList.hidden = false;
+        })
+        .catch(function () { closeAc(); });
+    }
+
+    input.addEventListener("input", function () {
+      clearTimeout(acTimer);
+      acTimer = setTimeout(function () { showAc(input.value.trim()); }, 280);
     });
 
-    document.getElementById(clearId).addEventListener("click", function () {
+    input.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape") { closeAc(); return; }
+      if (!acList.hidden && acItems.length) {
+        if (ev.key === "ArrowDown") {
+          ev.preventDefault(); highlightAc((acIndex + 1) % acItems.length); return;
+        }
+        if (ev.key === "ArrowUp") {
+          ev.preventDefault(); highlightAc((acIndex - 1 + acItems.length) % acItems.length); return;
+        }
+        if (ev.key === "Enter") {
+          ev.preventDefault();
+          if (acIndex >= 0) { input.value = acItems[acIndex].display_name; closeAc(); commit(input.value); }
+          else { closeAc(); commit(input.value.trim()); }
+          return;
+        }
+      }
+      if (ev.key === "Enter") { ev.preventDefault(); commit(input.value.trim()); }
+    });
+
+    input.addEventListener("blur", function () { setTimeout(closeAc, 150); });
+
+    document.getElementById(which + "Set").addEventListener("click", function () {
+      closeAc(); commit(input.value.trim());
+    });
+
+    document.getElementById(which + "Clear").addEventListener("click", function () {
       state[which] = null;
       input.value = "";
+      closeAc();
       save();
       placeAnchor(which);
       invalidateDriving();
       refreshCalcBtn();
       setStatus(status, "Cleared.", "");
       render();
-    });
-
-    input.addEventListener("keydown", function (ev) {
-      if (ev.key === "Enter") { ev.preventDefault(); document.getElementById(setId).click(); }
     });
   }
 

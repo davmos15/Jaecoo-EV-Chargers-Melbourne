@@ -59,6 +59,10 @@ Prices and charging speeds change often and vary by site and time of day — the
 
 These are free public services with fair-use limits; please don't hammer them. For heavy or commercial use, swap in a keyed provider (e.g. OpenRouteService, Mapbox).
 
+## Support
+
+If this saves you some charging frustration, you can [buy me a coffee ☕](https://buymeacoffee.com/nadavmoskow) — much appreciated!
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

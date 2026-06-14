@@ -13,7 +13,10 @@
 <body>
   <header class="site-header">
     <div class="wrap">
-      <h1>EV Charger Finder</h1>
+      <div class="header-top">
+        <h1>EV Charger Finder</h1>
+        <a href="https://buymeacoffee.com/nadavmoskow" target="_blank" rel="noopener" class="bmac">☕ Buy me a coffee</a>
+      </div>
       <p class="tagline">Chargers near your home &amp; work, on a map and in a list. This curated set covers south-east Melbourne and is compatible with the <strong>Jaecoo&nbsp;J5</strong> (Type&nbsp;2 AC · CCS2 DC).</p>
       <ul class="legend" aria-label="Map legend">
         <li><span class="dot free"></span>Free</li>
@@ -31,8 +34,11 @@
       <div class="field">
         <label for="homeInput">Home address</label>
         <div class="row">
-          <input id="homeInput" type="text" inputmode="text" autocomplete="off"
-                 placeholder="e.g. 123 Smith St, Caulfield South VIC" />
+          <div class="input-wrap">
+            <input id="homeInput" type="text" inputmode="text" autocomplete="off"
+                   placeholder="e.g. 123 Smith St, Caulfield South VIC" />
+            <ul id="homeAc" class="ac-dropdown" hidden></ul>
+          </div>
           <button id="homeSet" class="btn">Set</button>
           <button id="homeClear" class="btn ghost" title="Clear home">Clear</button>
         </div>
@@ -41,8 +47,11 @@
       <div class="field">
         <label for="workInput">Work address</label>
         <div class="row">
-          <input id="workInput" type="text" inputmode="text" autocomplete="off"
-                 placeholder="e.g. 15 Corporate Dr, Heatherton VIC" />
+          <div class="input-wrap">
+            <input id="workInput" type="text" inputmode="text" autocomplete="off"
+                   placeholder="e.g. 123 Collins St, Melbourne VIC" />
+            <ul id="workAc" class="ac-dropdown" hidden></ul>
+          </div>
           <button id="workSet" class="btn">Set</button>
           <button id="workClear" class="btn ghost" title="Clear work">Clear</button>
         </div>
