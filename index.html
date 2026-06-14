@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Find EV chargers near your home and work. Compatible-charger map and list with real driving distances. Tuned for the Jaecoo J5 (Type 2 / CCS2) in south-east Melbourne." />
+  <title>EV Charger Finder</title>
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <h1>EV Charger Finder</h1>
+      <p class="tagline">Chargers near your home &amp; work, on a map and in a list. This curated set covers south-east Melbourne and is compatible with the <strong>Jaecoo&nbsp;J5</strong> (Type&nbsp;2 AC · CCS2 DC).</p>
+      <ul class="legend" aria-label="Map legend">
+        <li><span class="dot free"></span>Free</li>
+        <li><span class="dot partial"></span>Free allowance / pay-parking</li>
+        <li><span class="dot paid"></span>Paid</li>
+        <li><span class="dot home"></span>Home</li>
+        <li><span class="dot work"></span>Work</li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Setup: home & work addresses -->
+  <section class="setup" aria-label="Set your home and work addresses">
+    <div class="wrap setup-grid">
+      <div class="field">
+        <label for="homeInput">Home address</label>
+        <div class="row">
+          <input id="homeInput" type="text" inputmode="text" autocomplete="off"
+                 placeholder="e.g. 66 Carlingford St, Caulfield South VIC" />
+          <button id="homeSet" class="btn">Set</button>
+          <button id="homeClear" class="btn ghost" title="Clear home">Clear</button>
+        </div>
+        <p id="homeStatus" class="status" role="status"></p>
+      </div>
+      <div class="field">
+        <label for="workInput">Work address</label>
+        <div class="row">
+          <input id="workInput" type="text" inputmode="text" autocomplete="off"
+                 placeholder="e.g. 15 Corporate Dr, Heatherton VIC" />
+          <button id="workSet" class="btn">Set</button>
+          <button id="workClear" class="btn ghost" title="Clear work">Clear</button>
+        </div>
+        <p id="workStatus" class="status" role="status"></p>
+      </div>
+    </div>
+    <p class="wrap privacy">Your addresses are saved only in this browser (nothing is sent anywhere except the address lookup itself). Share the page freely — everyone sets their own.</p>
+  </section>
+
+  <!-- Controls -->
+  <div class="controls" role="region" aria-label="Filter and sort">
+    <div class="wrap controls-grid">
+      <div class="ctl">
+        <span class="ctl-label">Show</span>
+        <div class="seg" id="filter" role="group" aria-label="Filter by cost">
+          <button data-f="all" class="on">All</button>
+          <button data-f="free">Free</button>
+          <button data-f="paid">Paid</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <span class="ctl-label">Type</span>
+        <div class="seg" id="speed" role="group" aria-label="Filter by charger type">
+          <button data-sp="all" class="on">All</button>
+          <button data-sp="dc">DC fast</button>
+          <button data-sp="ac">AC</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label class="ctl-label" for="sortSel">Sort by</label>
+        <select id="sortSel">
+          <option value="home">Distance from home</option>
+          <option value="work">Distance from work</option>
+          <option value="name">Name (A–Z)</option>
+        </select>
+      </div>
+      <div class="ctl grow">
+        <label class="ctl-label" for="q">Search</label>
+        <input id="q" type="search" placeholder="name, suburb, network…" />
+      </div>
+      <div class="ctl">
+        <button id="calcBtn" class="btn primary" disabled>Calculate driving distances</button>
+        <span id="calcStatus" class="status inline" role="status"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div id="map" role="application" aria-label="Map of chargers"></div>
+
+  <!-- List -->
+  <main class="wrap">
+    <p id="count" class="count"></p>
+    <ul id="list" class="list" aria-label="Charger list"></ul>
+    <footer class="foot">
+      <p>Prices and speeds are approximate and change often — always confirm in the network's own app. “By road” distances use OpenStreetMap routing; “straight-line” is shown until you calculate. Data last reviewed <span id="verified"></span>.</p>
+      <p>Maps © OpenStreetMap contributors · routing by OSRM · geocoding by Nominatim.</p>
+    </footer>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
+          integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+          crossorigin="" referrerpolicy="no-referrer"></script>
+  <script src="chargers.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
