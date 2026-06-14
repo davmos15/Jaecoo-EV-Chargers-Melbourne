@@ -385,6 +385,25 @@
   document.getElementById("q").addEventListener("input", function (e) { state.query = e.target.value; render(); });
   document.getElementById("calcBtn").addEventListener("click", calcDriving);
 
+  /* ---------- view toggle ---------- */
+  var mapEl = document.getElementById("map");
+  var listWrap = document.querySelector("main.wrap");
+
+  function applyView(v) {
+    mapEl.style.display    = (v === "list") ? "none" : "";
+    listWrap.style.display = (v === "map")  ? "none" : "";
+    if (v !== "list") { setTimeout(function () { map.invalidateSize(); }, 0); }
+  }
+
+  document.getElementById("viewToggle").addEventListener("click", function (e) {
+    var v = e.target.getAttribute("data-v");
+    if (!v) return;
+    Array.prototype.forEach.call(e.currentTarget.children, function (b) {
+      b.classList.toggle("on", b === e.target);
+    });
+    applyView(v);
+  });
+
   // fit map to chargers initially
   try {
     var grp = L.featureGroup(markers);

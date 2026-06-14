@@ -7,9 +7,7 @@
   <title>EV Charger Finder</title>
 
   <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
-        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-        crossorigin="" referrerpolicy="no-referrer" />
+        href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -34,7 +32,7 @@
         <label for="homeInput">Home address</label>
         <div class="row">
           <input id="homeInput" type="text" inputmode="text" autocomplete="off"
-                 placeholder="e.g. 66 Carlingford St, Caulfield South VIC" />
+                 placeholder="e.g. 123 Smith St, Caulfield South VIC" />
           <button id="homeSet" class="btn">Set</button>
           <button id="homeClear" class="btn ghost" title="Clear home">Clear</button>
         </div>
@@ -89,6 +87,14 @@
         <button id="calcBtn" class="btn primary" disabled>Calculate driving distances</button>
         <span id="calcStatus" class="status inline" role="status"></span>
       </div>
+      <div class="ctl">
+        <span class="ctl-label">View</span>
+        <div class="seg" id="viewToggle" role="group" aria-label="Toggle view">
+          <button data-v="both" class="on">Map &amp; List</button>
+          <button data-v="list">List only</button>
+          <button data-v="map">Map only</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -105,9 +111,7 @@
     </footer>
   </main>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
-          integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-          crossorigin="" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <script src="chargers.js"></script>
   <script src="app.js"></script>
 </body>
