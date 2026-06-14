@@ -1,6 +1,10 @@
-# EV Charger Finder
+# EV Charger Finder — South-East Melbourne
 
-A small, single-page web app for finding EV chargers near your **home** and **work**, on an interactive map and in a sortable/filterable list. The bundled charger list covers **south-east Melbourne** and every entry is compatible with the **Jaecoo J5** (Type 2 AC · CCS2 DC) — but the app works for anyone: you set your own home and work addresses and they're remembered in your browser.
+A single-page web app for finding EV chargers near your **home** and **work**, shown on an interactive map and a sortable/filterable list.
+
+**Live site:** [davmos15.github.io/Jaecoo-EV-Chargers-Melbourne](https://davmos15.github.io/Jaecoo-EV-Chargers-Melbourne/)
+
+The bundled charger list covers **south-east Melbourne** and every entry is compatible with the **Jaecoo J5** (Type 2 AC · CCS2 DC) — but the app works for anyone. You set your own home and work addresses and they're saved in your browser only.
 
 No build step, no framework, no API keys. Just static files.
 
@@ -15,22 +19,9 @@ No build step, no framework, no API keys. Just static files.
 - **Directions** (opens Google Maps driving directions) and **Details** (opens the charger's Google Maps page) on every entry.
 - Each charger shows speed/connector, approximate cost, and whether you need to bring your own Type 2 cable.
 
-## Run it
-
-### Option A — just open it
-Download the folder and double-click `index.html`. It runs straight from your file system. (Address lookup and routing still work because they call public OpenStreetMap services over HTTPS.)
-
-### Option B — host on GitHub Pages (recommended for sharing)
-1. Create a new GitHub repository and upload these files to the root:
-   `index.html`, `styles.css`, `app.js`, `chargers.js`, `README.md`, `LICENSE`, `.nojekyll`
-2. In the repo, go to **Settings → Pages**.
-3. Under **Build and deployment**, set **Source = Deploy from a branch**, **Branch = main**, **Folder = / (root)**, then **Save**.
-4. Wait ~1 minute, then open the URL GitHub shows (e.g. `https://yourname.github.io/ev-charger-finder/`).
-5. Share that link. Everyone who opens it sets their own home/work — their addresses live only in their own browser.
-
 ## How to use
 
-1. Type your **home address** (include suburb + state, e.g. `66 Carlingford St, Caulfield South VIC`) and press **Set**. Do the same for **work**.
+1. Type your **home address** (include suburb + state, e.g. `123 Example St, Caulfield South VIC`) and press **Set**. Do the same for **work**.
 2. Press **Calculate driving distances** to replace the straight-line estimates with real by-road distance and drive time.
 3. Filter / sort / search to taste. Tap pins or cards for details and directions.
 
