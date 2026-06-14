@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="description" content="Find EV chargers near your home and work. Compatible-charger map and list with real driving distances. Tuned for the Jaecoo J5 (Type 2 / CCS2) in south-east Melbourne." />
   <title>EV Charger Finder</title>
 
@@ -112,6 +112,11 @@
   <!-- Map -->
   <div class="map-container">
     <div id="map" role="application" aria-label="Map of chargers"></div>
+    <div class="map-layer-ctrl" id="layerBtns" role="group" aria-label="Map style">
+      <button class="lbtn on" data-layer="street">Street</button>
+      <button class="lbtn" data-layer="satellite">Satellite</button>
+      <button class="lbtn" data-layer="dark">Dark</button>
+    </div>
     <button id="fsBtn" class="fs-btn" title="Toggle fullscreen map">⛶</button>
   </div>
 

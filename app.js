@@ -45,12 +45,37 @@
   }
 
   /* ---------- map ---------- */
+  var tileLayers = {
+    street: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+    }),
+    satellite: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+      maxZoom: 19,
+      attribution: "Tiles &copy; Esri &mdash; Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, GIS User Community"
+    }),
+    dark: L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      maxZoom: 19,
+      attribution: "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors &copy; <a href='https://carto.com/attributions'>CARTO</a>"
+    })
+  };
+  var activeBaseLayer = tileLayers.street;
   var map = L.map("map", { scrollWheelZoom: true })
              .setView([-37.92, 145.05], 12);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: "&copy; OpenStreetMap contributors"
-  }).addTo(map);
+  activeBaseLayer.addTo(map);
+
+  document.getElementById("layerBtns").addEventListener("click", function (e) {
+    var btn = e.target.closest(".lbtn");
+    if (!btn) return;
+    var key = btn.getAttribute("data-layer");
+    if (!tileLayers[key] || tileLayers[key] === activeBaseLayer) return;
+    map.removeLayer(activeBaseLayer);
+    activeBaseLayer = tileLayers[key];
+    activeBaseLayer.addTo(map);
+    Array.prototype.forEach.call(document.querySelectorAll(".lbtn"), function (b) {
+      b.classList.toggle("on", b === btn);
+    });
+  });
 
   var markers = [];
   CHARGERS.forEach(function (c, i) {
@@ -396,7 +421,7 @@
             var li = document.createElement("li");
             li.className = "ac-item";
             li.textContent = r.display_name;
-            li.addEventListener("mousedown", function (e) {
+            li.addEventListener("pointerdown", function (e) {
               e.preventDefault();
               input.value = r.display_name;
               closeAc();
