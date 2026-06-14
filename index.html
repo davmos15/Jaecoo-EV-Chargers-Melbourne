@@ -24,6 +24,7 @@
         <li><span class="dot paid"></span>Paid</li>
         <li><span class="dot home"></span>Home</li>
         <li><span class="dot work"></span>Work</li>
+        <li><span class="dot-dash"></span>Unverified entry — access or details not confirmed (dashed border on card &amp; pin)</li>
       </ul>
     </div>
   </header>
@@ -86,6 +87,7 @@
           <option value="home">Distance from home</option>
           <option value="work">Distance from work</option>
           <option value="name">Name (A–Z)</option>
+          <option value="price">Price (low–high)</option>
         </select>
       </div>
       <div class="ctl grow">
@@ -108,7 +110,10 @@
   </div>
 
   <!-- Map -->
-  <div id="map" role="application" aria-label="Map of chargers"></div>
+  <div class="map-container">
+    <div id="map" role="application" aria-label="Map of chargers"></div>
+    <button id="fsBtn" class="fs-btn" title="Toggle fullscreen map">⛶</button>
+  </div>
 
   <!-- List -->
   <main class="wrap">

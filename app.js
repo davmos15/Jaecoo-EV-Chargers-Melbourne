@@ -57,9 +57,14 @@
     var m = L.circleMarker([c.lat, c.lng], {
       radius: 8, weight: 2.5, color: "#fff",
       fillColor: COL[c.t], fillOpacity: 1,
-      dashArray: c.v ? "3 2" : null
+      dashArray: c.v ? "4 3" : null
     }).addTo(map);
-    m.bindPopup(popupHtml(c), { closeButton: true });
+    m.bindPopup(popupHtml(c), {
+      closeButton: true,
+      autoPan: true,
+      autoPanPadding: [30, 90],
+      maxWidth: 300
+    });
     m.on("click", function () { selectCharger(i, false); });
     markers.push(m);
   });
@@ -158,6 +163,18 @@
     return e == null ? Infinity : e;
   }
 
+  /* ---------- price sort helper ---------- */
+  function costToNum(c) {
+    var s = c.cost.toLowerCase();
+    if (c.t === "free") return 0;
+    if (s.indexOf("unverified") !== -1 || s.indexOf("varies") !== -1) return 999;
+    if (s.indexOf("electricity free") !== -1) return 0.05;
+    var m = c.cost.match(/\$(\d+\.?\d*)/);
+    if (!m) return 999;
+    var val = parseFloat(m[1]);
+    return c.t === "partial" ? val * 0.75 : val;
+  }
+
   /* ---------- rendering ---------- */
   function tagLabel(t) { return t === "free" ? "FREE" : t === "partial" ? "FREE ALLOWANCE" : "PAID"; }
   function isDC(c) { return /DC/.test(c.kw); }
@@ -235,14 +252,17 @@
     var sk = state.sort;
     if (sk === "name") {
       rows.sort(function (a, b) { return a.c.n.localeCompare(b.c.n); });
+    } else if (sk === "price") {
+      rows.sort(function (a, b) { return costToNum(a.c) - costToNum(b.c); });
     } else {
       rows.sort(function (a, b) { return sortKmFor(a.c, sk) - sortKmFor(b.c, sk); });
     }
 
     var sortNote = "";
     if ((sk === "home" || sk === "work") && !state[sk]) sortNote = " · set your " + sk + " address to sort by distance";
-    countEl.textContent = rows.length + " charger" + (rows.length !== 1 ? "s" : "") + " shown" +
-      (sk === "name" ? "" : " · sorted by " + (state.drivingDone ? "driving" : "estimated") + " distance from " + sk) + sortNote;
+    var sortLabel = sk === "name" ? "" : sk === "price" ? " · sorted by price" :
+      " · sorted by " + (state.drivingDone ? "driving" : "estimated") + " distance from " + sk;
+    countEl.textContent = rows.length + " charger" + (rows.length !== 1 ? "s" : "") + " shown" + sortLabel + sortNote;
 
     // dim filtered-out markers
     var shown = {};
@@ -287,24 +307,26 @@
   }
 
   // selecting from MAP (fromList=false): show popup on map only, highlight card without scrolling.
-  // selecting from LIST (fromList=true): move map to it and open its popup.
+  // selecting from LIST (fromList=true): fly to it then open the popup once the pan finishes.
   function selectCharger(i, fromList) {
     state.selected = i;
     Array.prototype.forEach.call(listEl.querySelectorAll(".card"), function (el) {
       el.classList.toggle("sel", +el.dataset.i === i);
     });
     var c = CHARGERS[i];
-    if (fromList) {
-      map.flyTo([c.lat, c.lng], Math.max(map.getZoom(), 14), { duration: 0.6 });
+    function openAndFillPopup() {
       markers[i].openPopup();
-    } else {
-      markers[i].openPopup(); // popup stays on the map; no list scroll
+      setTimeout(function () {
+        var slot = document.getElementById("popdist-" + i);
+        if (slot) slot.textContent = popupDistText(c);
+      }, 0);
     }
-    // fill the popup's distance line
-    setTimeout(function () {
-      var slot = document.getElementById("popdist-" + i);
-      if (slot) slot.textContent = popupDistText(c);
-    }, 0);
+    if (fromList) {
+      map.once("moveend", openAndFillPopup);
+      map.flyTo([c.lat, c.lng], Math.max(map.getZoom(), 14), { duration: 0.6 });
+    } else {
+      openAndFillPopup();
+    }
   }
 
   /* ---------- address setup ---------- */
@@ -346,7 +368,7 @@
       closeAc();
       geocode(q).then(function (loc) {
         state[which] = loc;
-        input.value = loc.display_name || q;
+        input.value = loc.label;
         save();
         placeAnchor(which);
         invalidateDriving();
@@ -474,6 +496,20 @@
       b.classList.toggle("on", b === e.target);
     });
     applyView(v);
+  });
+
+  /* ---------- fullscreen map ---------- */
+  var fsBtn = document.getElementById("fsBtn");
+  var isFull = false;
+  fsBtn.addEventListener("click", function () {
+    isFull = !isFull;
+    document.body.classList.toggle("map-fs", isFull);
+    fsBtn.textContent = isFull ? "✕" : "⛶";
+    fsBtn.title = isFull ? "Exit fullscreen" : "Toggle fullscreen map";
+    setTimeout(function () { map.invalidateSize(); }, 50);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && isFull) { fsBtn.click(); }
   });
 
   // fit map to chargers initially
